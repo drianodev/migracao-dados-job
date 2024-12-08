@@ -10,6 +10,7 @@ import org.springframework.batch.item.support.ClassifierCompositeItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
@@ -25,11 +26,13 @@ public class MigrarPessoaStepConfig {
     Step migrarPessoaStep(
             ItemReader<Pessoa> arquivoPessoaReader,
             ClassifierCompositeItemWriter<Pessoa> pessoaClassifierWriter,
-            FlatFileItemWriter<Pessoa> arquivoPessoasInvalidasWriter) {
+            FlatFileItemWriter<Pessoa> arquivoPessoasInvalidasWriter,
+            TaskExecutor taskExecutor) {
         return new StepBuilder("migrarPessoaStep", jobRepository)
                 .<Pessoa, Pessoa>chunk(10000, transactionManager)
                 .reader(arquivoPessoaReader)
                 .writer(pessoaClassifierWriter)
+                .taskExecutor(taskExecutor)
                 .stream(arquivoPessoasInvalidasWriter)
                 .build();
     }

@@ -9,6 +9,7 @@ import org.springframework.batch.item.ItemWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @Configuration
@@ -23,11 +24,13 @@ public class MigrarDadosBancariosStepConfig {
     @Bean
     Step migrarDadosBancariosStep(
             ItemReader<DadosBancarios> arquivoDadosBancariosReader,
-            ItemWriter<DadosBancarios> bancoDadosBancariosWriter) {
+            ItemWriter<DadosBancarios> bancoDadosBancariosWriter,
+            TaskExecutor taskExecutor) {
         return new StepBuilder("migrarDadosBancariosStep", jobRepository)
                 .<DadosBancarios, DadosBancarios>chunk(10000, transactionManager)
                 .reader(arquivoDadosBancariosReader)
                 .writer(bancoDadosBancariosWriter)
+                .taskExecutor(taskExecutor)
                 .build();
     }
 }

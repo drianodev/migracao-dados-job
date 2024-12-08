@@ -24,6 +24,7 @@ public class ArquivoPessoaReaderConfig {
                 .names("nome", "email", "dataNascimento", "idade", "id")
                 .addComment("--")
                 .fieldSetMapper(fieldSetMapper())
+                .saveState(false)
                 .build();
     }
 
